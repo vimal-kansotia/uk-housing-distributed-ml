@@ -1,0 +1,5 @@
+model,training_time_sec,prediction_time_sec,mae,rmse,r2
+Linear Regression,26.8,1.12,94029.7424,390285.2672,0.0563
+Random Forest,1137.35,1.85,72582.558,358749.7764,0.2027
+XGBoost,105.65,2.36,66320.0695,352527.3945,0.2301
+LightGBM,74.9,0.2,66819.9541,352992.7218,0.2377

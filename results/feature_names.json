@@ -1,0 +1,30 @@
+{
+  "feature_columns": [
+    "year",
+    "month",
+    "quarter",
+    "property_type_idx",
+    "new_build_idx",
+    "duration_idx",
+    "county_idx",
+    "district_idx",
+    "town_idx"
+  ],
+  "target_column": "price",
+  "vector_column": "features",
+  "total_features": 9,
+  "categorical_indexed": [
+    "property_type_idx",
+    "new_build_idx",
+    "duration_idx",
+    "county_idx",
+    "district_idx",
+    "town_idx"
+  ],
+  "temporal_features": [
+    "year",
+    "month",
+    "quarter"
+  ],
+  "total_records": 22489348
+}

@@ -1,0 +1,15 @@
+{
+  "model": "XGBoost",
+  "training_time_sec": 105.65,
+  "prediction_time_sec": 2.36,
+  "mae": 66320.0695,
+  "rmse": 352527.3945,
+  "r2": 0.2301,
+  "integration": "xgboost.spark",
+  "hyperparameters": {
+    "max_depth": 5,
+    "learning_rate": 0.1,
+    "n_estimators": 100,
+    "seed": 42
+  }
+}

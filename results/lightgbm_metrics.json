@@ -1,0 +1,15 @@
+{
+  "model": "LightGBM",
+  "training_time_sec": 74.9,
+  "prediction_time_sec": 0.2,
+  "mae": 66819.9541,
+  "rmse": 352992.7218,
+  "r2": 0.2377,
+  "integration": "LightGBM Native (Spark-Integrated)",
+  "hyperparameters": {
+    "num_leaves": 31,
+    "learning_rate": 0.1,
+    "n_estimators": 100,
+    "seed": 42
+  }
+}

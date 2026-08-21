@@ -1,0 +1,43 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+
+# Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+
+# Large Datasets & Parquet Medallion Layers (Exceeds GitHub 100MB limit)
+data/raw/*.csv
+data/raw/*.gz
+data/raw/*.zip
+data/bronze/
+data/silver/
+data/gold/
+data/split/
+
+# Keep directory structure
+!data/raw/.gitkeep
+!data/bronze/.gitkeep
+!data/silver/.gitkeep
+!data/gold/.gitkeep
+!data/split/.gitkeep
+
+# IDEs & System Files
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Jupyter Checkpoints
+.ipynb_checkpoints/
+
+# Spark / Hadoop temp files
+metastore_db/
+derby.log
+*.tmp
