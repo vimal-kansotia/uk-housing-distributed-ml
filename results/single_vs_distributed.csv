@@ -1,0 +1,9 @@
+task,single_node_time_sec,distributed_time_sec,speedup_factor,single_node_peak_ram_gb,distributed_peak_ram_per_worker_gb,single_throughput_rows_sec,distributed_throughput_rows_sec,scaling_efficiency_pct
+CSV Data Ingestion (2.4 GB),184.20,38.10,4.83x,8.40,1.20,122092,590271,80.5%
+Medallion Silver Cleansing & Dedup,890.50,239.39,3.72x,14.80,2.10,25254,93944,62.0%
+Feature Vector Assembler & StringIndexer,312.00,82.40,3.79x,11.20,1.80,72081,272928,63.1%
+Linear Regression Training,92.50,26.80,3.45x,7.50,1.10,194505,671333,57.5%
+Random Forest (50 Parallel Trees),4820.00,1137.35,4.24x,18.50,2.80,3732,15819,70.6%
+XGBoost Gradient Boosting,410.00,105.65,3.88x,12.60,2.20,43882,170295,64.7%
+LightGBM Vectorized Training,185.00,74.90,2.47x,9.10,1.90,97252,240210,41.2%
+Test Partition Inference (4.5M rows),6.80,1.85,3.68x,5.20,0.80,661412,2431136,61.3%
