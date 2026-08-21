@@ -20,27 +20,74 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# Custom CSS for Next-Gen World-Class Aesthetics
+# Custom CSS for Deep Violet Luxury Glassmorphic Aesthetics
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
     
-    /* Base Typography & Background */
+    /* Base Typography & Deep Violet Background */
     html, body, [class*="css"] {
         font-family: 'Plus Jakarta Sans', sans-serif;
-        color: #F1F5F9;
+        color: #F8FAFC;
     }
     
     .stApp {
-        background: #080C14;
-        background-image: 
-            radial-gradient(circle at 10% 10%, rgba(59, 130, 246, 0.08) 0%, transparent 40%),
-            radial-gradient(circle at 90% 90%, rgba(139, 92, 246, 0.08) 0%, transparent 40%),
-            radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.03) 0%, transparent 50%);
+        background: #000000 !important;
     }
 
     code, pre {
         font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Luxury Violet Sidebar */
+    [data-testid="stSidebar"] {
+        background: #000000 !important;
+        border-right: 1px solid rgba(139, 92, 246, 0.25) !important;
+        box-shadow: 4px 0 25px rgba(0, 0, 0, 0.5) !important;
+    }
+
+    /* Sidebar Radio Navigation Pills */
+    [data-testid="stSidebar"] .stRadio > div {
+        gap: 6px;
+    }
+    [data-testid="stSidebar"] .stRadio label {
+        background: rgba(25, 14, 46, 0.6);
+        border: 1px solid rgba(139, 92, 246, 0.2);
+        border-radius: 12px;
+        padding: 0.55rem 0.9rem;
+        margin-bottom: 0.3rem;
+        transition: all 0.25s ease;
+        color: #CBD5E1;
+        font-weight: 500;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+    }
+    [data-testid="stSidebar"] .stRadio label:hover {
+        background: rgba(139, 92, 246, 0.2);
+        border-color: rgba(139, 92, 246, 0.5);
+        color: #F5D0FE;
+        transform: translateX(4px);
+    }
+    [data-testid="stSidebar"] .stRadio label[data-checked="true"],
+    [data-testid="stSidebar"] .stRadio input:checked + div,
+    [data-testid="stSidebar"] .stRadio [aria-checked="true"] {
+        background: linear-gradient(135deg, rgba(139, 92, 246, 0.35) 0%, rgba(236, 72, 153, 0.2) 100%) !important;
+        border: 1px solid #A78BFA !important;
+        color: #FFFFFF !important;
+        font-weight: 700 !important;
+        box-shadow: 0 0 15px rgba(139, 92, 246, 0.3) !important;
+    }
+
+    /* Sidebar Selectbox & Inputs */
+    [data-testid="stSidebar"] [data-baseweb="select"] > div {
+        background-color: rgba(19, 10, 36, 0.8) !important;
+        border: 1px solid rgba(139, 92, 246, 0.3) !important;
+        border-radius: 10px !important;
+        color: #F1F5F9 !important;
+    }
+    [data-testid="stSidebar"] [data-baseweb="select"] > div:hover {
+        border-color: #8B5CF6 !important;
     }
 
     /* Live Cluster Status Bar */
@@ -48,15 +95,16 @@ st.markdown("""
         display: flex;
         align-items: center;
         justify-content: space-between;
-        background: rgba(15, 23, 42, 0.7);
-        border: 1px solid rgba(59, 130, 246, 0.2);
+        background: rgba(20, 10, 38, 0.75);
+        border: 1px solid rgba(139, 92, 246, 0.3);
         backdrop-filter: blur(16px);
-        border-radius: 12px;
-        padding: 0.6rem 1.2rem;
+        border-radius: 14px;
+        padding: 0.65rem 1.3rem;
         margin-bottom: 1.5rem;
         font-size: 0.82rem;
         flex-wrap: wrap;
         gap: 0.6rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     }
     
     .status-dot {
@@ -65,7 +113,7 @@ st.markdown("""
         background-color: #10B981;
         border-radius: 50%;
         display: inline-block;
-        box-shadow: 0 0 8px #10B981;
+        box-shadow: 0 0 10px #10B981;
         margin-right: 6px;
         animation: pulse 2s infinite;
     }
@@ -78,13 +126,13 @@ st.markdown("""
     
     /* Hero Banner */
     .hero-banner {
-        background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.85) 50%, rgba(30, 58, 138, 0.8) 100%);
+        background: linear-gradient(135deg, rgba(16, 7, 34, 0.95) 0%, rgba(35, 15, 66, 0.9) 50%, rgba(91, 33, 182, 0.85) 100%);
         padding: 2.4rem 2.6rem;
         border-radius: 22px;
-        border: 1px solid rgba(59, 130, 246, 0.3);
+        border: 1px solid rgba(139, 92, 246, 0.4);
         color: white;
         margin-bottom: 1.8rem;
-        box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.06) inset;
+        box-shadow: 0 20px 45px -12px rgba(124, 58, 237, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.08) inset;
         position: relative;
         overflow: hidden;
     }
@@ -94,9 +142,9 @@ st.markdown("""
         position: absolute;
         top: -50%;
         right: -20%;
-        width: 300px;
-        height: 300px;
-        background: radial-gradient(circle, rgba(59, 130, 246, 0.2) 0%, transparent 70%);
+        width: 320px;
+        height: 320px;
+        background: radial-gradient(circle, rgba(236, 72, 153, 0.25) 0%, transparent 70%);
         pointer-events: none;
     }
     
@@ -107,7 +155,7 @@ st.markdown("""
         margin: 0;
         letter-spacing: -1px;
         line-height: 1.15;
-        background: linear-gradient(120deg, #FFFFFF 0%, #E2E8F0 50%, #60A5FA 100%);
+        background: linear-gradient(120deg, #FFFFFF 0%, #F5D0FE 50%, #C084FC 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
     }
@@ -115,7 +163,7 @@ st.markdown("""
     .hero-subtitle {
         font-size: 1.05rem;
         margin-top: 0.8rem;
-        color: #94A3B8;
+        color: #CBD5E1;
         font-weight: 400;
         max-width: 920px;
         line-height: 1.6;
@@ -130,19 +178,19 @@ st.markdown("""
 
     /* Filter Bar Box */
     .filter-box {
-        background: rgba(17, 24, 39, 0.65);
-        border: 1px solid rgba(59, 130, 246, 0.25);
+        background: rgba(22, 11, 42, 0.7);
+        border: 1px solid rgba(139, 92, 246, 0.3);
         backdrop-filter: blur(20px);
         border-radius: 16px;
         padding: 1.2rem 1.5rem;
         margin-bottom: 1.8rem;
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.35);
     }
     
     .filter-title {
         font-size: 0.9rem;
         font-weight: 700;
-        color: #93C5FD;
+        color: #C084FC;
         margin-bottom: 0.8rem;
         display: flex;
         align-items: center;
@@ -153,40 +201,40 @@ st.markdown("""
 
     /* Glassmorphism Metric Cards */
     .metric-card {
-        background: rgba(17, 24, 39, 0.7);
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(20, 10, 38, 0.75);
+        border: 1px solid rgba(139, 92, 246, 0.2);
         backdrop-filter: blur(20px);
         border-radius: 18px;
         padding: 1.4rem 1.3rem;
         text-align: left;
         position: relative;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
     }
     
     .metric-card:hover {
         transform: translateY(-5px);
-        border-color: rgba(59, 130, 246, 0.5);
-        box-shadow: 0 18px 40px -10px rgba(59, 130, 246, 0.25);
+        border-color: rgba(139, 92, 246, 0.6);
+        box-shadow: 0 18px 40px -10px rgba(139, 92, 246, 0.35);
     }
 
-    .metric-card-accent { border-top: 4px solid #3B82F6; }
+    .metric-card-accent { border-top: 4px solid #8B5CF6; }
     .metric-card-green { border-top: 4px solid #10B981; }
-    .metric-card-purple { border-top: 4px solid #8B5CF6; }
+    .metric-card-purple { border-top: 4px solid #EC4899; }
     .metric-card-amber { border-top: 4px solid #F59E0B; }
 
     .metric-val {
         font-family: 'Outfit', sans-serif;
         font-size: 2.1rem;
         font-weight: 800;
-        color: #F8FAFC;
+        color: #FFFFFF;
         letter-spacing: -0.5px;
         margin-top: 0.4rem;
     }
 
     .metric-sub {
         font-size: 0.82rem;
-        color: #94A3B8;
+        color: #CBD5E1;
         font-weight: 500;
         margin-top: 0.25rem;
     }
@@ -196,25 +244,25 @@ st.markdown("""
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 1.2px;
-        color: #64748B;
+        color: #A78BFA;
     }
 
     /* Section Cards */
     .info-card {
-        background: rgba(17, 24, 39, 0.6);
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(20, 10, 38, 0.65);
+        border: 1px solid rgba(139, 92, 246, 0.25);
         backdrop-filter: blur(16px);
         border-radius: 18px;
         padding: 1.6rem;
         margin-bottom: 1.2rem;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
     }
 
     .info-card h3 {
         margin-top: 0;
         font-size: 1.25rem;
         font-weight: 700;
-        color: #F1F5F9;
+        color: #F5D0FE;
         display: flex;
         align-items: center;
         gap: 0.5rem;
@@ -230,25 +278,25 @@ st.markdown("""
         font-weight: 700;
         letter-spacing: 0.3px;
     }
-    .badge-blue { background: rgba(59, 130, 246, 0.15); color: #60A5FA; border: 1px solid rgba(59, 130, 246, 0.3); }
-    .badge-green { background: rgba(16, 185, 129, 0.15); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.3); }
-    .badge-purple { background: rgba(139, 92, 246, 0.15); color: #A78BFA; border: 1px solid rgba(139, 92, 246, 0.3); }
-    .badge-amber { background: rgba(245, 158, 11, 0.15); color: #FBBF24; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .badge-blue { background: rgba(139, 92, 246, 0.2); color: #C084FC; border: 1px solid rgba(139, 92, 246, 0.4); }
+    .badge-green { background: rgba(16, 185, 129, 0.2); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.4); }
+    .badge-purple { background: rgba(236, 72, 153, 0.2); color: #F472B6; border: 1px solid rgba(236, 72, 153, 0.4); }
+    .badge-amber { background: rgba(245, 158, 11, 0.2); color: #FBBF24; border: 1px solid rgba(245, 158, 11, 0.4); }
 
     /* Prediction Card */
     .prediction-box {
-        background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(5, 150, 105, 0.22) 100%);
-        border: 2px solid #10B981;
+        background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(236, 72, 153, 0.25) 100%);
+        border: 2px solid #A78BFA;
         border-radius: 20px;
         padding: 2.4rem;
         text-align: center;
-        box-shadow: 0 20px 40px -10px rgba(16, 185, 129, 0.25);
+        box-shadow: 0 20px 45px -10px rgba(139, 92, 246, 0.35);
     }
     .prediction-val {
         font-family: 'Outfit', sans-serif;
         font-size: 3.4rem;
         font-weight: 900;
-        color: #10B981;
+        color: #F5D0FE;
         letter-spacing: -1.5px;
         margin: 0.6rem 0;
     }
@@ -256,22 +304,22 @@ st.markdown("""
     /* Tab styling */
     .stTabs [data-baseweb="tab-list"] {
         gap: 8px;
-        background-color: rgba(17, 24, 39, 0.5);
+        background-color: rgba(20, 10, 38, 0.7);
         padding: 6px;
         border-radius: 14px;
-        border: 1px solid rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(139, 92, 246, 0.25);
     }
     .stTabs [data-baseweb="tab"] {
         border-radius: 10px;
         padding: 8px 16px;
         font-weight: 600;
         font-size: 0.88rem;
-        color: #94A3B8;
+        color: #CBD5E1;
     }
     .stTabs [aria-selected="true"] {
-        background-color: rgba(59, 130, 246, 0.2) !important;
-        color: #60A5FA !important;
-        border: 1px solid rgba(59, 130, 246, 0.4) !important;
+        background-color: rgba(139, 92, 246, 0.25) !important;
+        color: #F5D0FE !important;
+        border: 1px solid rgba(139, 92, 246, 0.5) !important;
     }
 
     /* Custom scrollbar */
@@ -280,14 +328,14 @@ st.markdown("""
         height: 8px;
     }
     ::-webkit-scrollbar-track {
-        background: #080C14;
+        background: #090514;
     }
     ::-webkit-scrollbar-thumb {
-        background: #1E293B;
+        background: #2D1B4E;
         border-radius: 4px;
     }
     ::-webkit-scrollbar-thumb:hover {
-        background: #334155;
+        background: #8B5CF6;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -316,8 +364,104 @@ menu = st.sidebar.radio(
     label_visibility="collapsed",
 )
 
+# Fixed Theme
+theme_choice = "💜 Royal Amethyst (Deep Violet & Neon Pink)"
+
+# Dynamic Theme Palettes
+THEME_PALETTES = {
+    "🌌 Cyber Neon (Electric Cyan & Emerald)": {
+        "app_bg": "#000000",
+        "mesh_1": "rgba(6, 182, 212, 0.12)",
+        "mesh_2": "rgba(16, 185, 129, 0.10)",
+        "hero_grad": "linear-gradient(135deg, rgba(6, 10, 18, 0.95) 0%, rgba(15, 23, 42, 0.85) 50%, rgba(14, 116, 144, 0.8) 100%)",
+        "hero_border": "rgba(6, 182, 212, 0.35)",
+        "accent_primary": "#06B6D4",
+        "accent_secondary": "#10B981",
+        "title_grad": "linear-gradient(120deg, #FFFFFF 0%, #E2E8F0 50%, #22D3EE 100%)",
+        "tab_active": "rgba(6, 182, 212, 0.2)",
+        "tab_border": "rgba(6, 182, 212, 0.45)",
+    },
+    "💜 Royal Amethyst (Deep Violet & Neon Pink)": {
+        "app_bg": "#000000",
+        "mesh_1": "rgba(139, 92, 246, 0.14)",
+        "mesh_2": "rgba(236, 72, 153, 0.10)",
+        "hero_grad": "linear-gradient(135deg, rgba(9, 5, 20, 0.95) 0%, rgba(30, 16, 56, 0.85) 50%, rgba(91, 33, 182, 0.8) 100%)",
+        "hero_border": "rgba(139, 92, 246, 0.4)",
+        "accent_primary": "#8B5CF6",
+        "accent_secondary": "#EC4899",
+        "title_grad": "linear-gradient(120deg, #FFFFFF 0%, #F5D0FE 50%, #C084FC 100%)",
+        "tab_active": "rgba(139, 92, 246, 0.25)",
+        "tab_border": "rgba(139, 92, 246, 0.5)",
+    },
+    "🌊 Midnight Sapphire (Tech Blue & Ice)": {
+        "app_bg": "#000000",
+        "mesh_1": "rgba(59, 130, 246, 0.14)",
+        "mesh_2": "rgba(56, 189, 248, 0.10)",
+        "hero_grad": "linear-gradient(135deg, rgba(8, 14, 26, 0.95) 0%, rgba(15, 23, 42, 0.85) 50%, rgba(30, 58, 138, 0.8) 100%)",
+        "hero_border": "rgba(59, 130, 246, 0.35)",
+        "accent_primary": "#3B82F6",
+        "accent_secondary": "#38BDF8",
+        "title_grad": "linear-gradient(120deg, #FFFFFF 0%, #E2E8F0 50%, #60A5FA 100%)",
+        "tab_active": "rgba(59, 130, 246, 0.2)",
+        "tab_border": "rgba(59, 130, 246, 0.4)",
+    },
+    "🌲 Emerald Lakehouse (Dark Teal & Mint)": {
+        "app_bg": "#000000",
+        "mesh_1": "rgba(16, 185, 129, 0.14)",
+        "mesh_2": "rgba(20, 184, 166, 0.10)",
+        "hero_grad": "linear-gradient(135deg, rgba(4, 16, 14, 0.95) 0%, rgba(6, 44, 38, 0.85) 50%, rgba(4, 120, 87, 0.8) 100%)",
+        "hero_border": "rgba(16, 185, 129, 0.35)",
+        "accent_primary": "#10B981",
+        "accent_secondary": "#34D399",
+        "title_grad": "linear-gradient(120deg, #FFFFFF 0%, #D1FAE5 50%, #6EE7B7 100%)",
+        "tab_active": "rgba(16, 185, 129, 0.2)",
+        "tab_border": "rgba(16, 185, 129, 0.45)",
+    },
+    "🔥 Sunset Amber & Crimson (Warm Gold & Coral)": {
+        "app_bg": "#000000",
+        "mesh_1": "rgba(245, 158, 11, 0.14)",
+        "mesh_2": "rgba(244, 63, 94, 0.10)",
+        "hero_grad": "linear-gradient(135deg, rgba(18, 10, 6, 0.95) 0%, rgba(46, 20, 12, 0.85) 50%, rgba(180, 83, 9, 0.8) 100%)",
+        "hero_border": "rgba(245, 158, 11, 0.35)",
+        "accent_primary": "#F59E0B",
+        "accent_secondary": "#F43F5E",
+        "title_grad": "linear-gradient(120deg, #FFFFFF 0%, #FEF3C7 50%, #FBBF24 100%)",
+        "tab_active": "rgba(245, 158, 11, 0.2)",
+        "tab_border": "rgba(245, 158, 11, 0.45)",
+    },
+}
+
+current_theme = THEME_PALETTES.get(theme_choice, THEME_PALETTES["🌌 Cyber Neon (Electric Cyan & Emerald)"])
+
+# Inject Dynamic Theme CSS Overrides
+st.markdown(f"""
+<style>
+    .stApp {{
+        background: #000000 !important;
+    }}
+    .hero-banner {{
+        background: {current_theme['hero_grad']} !important;
+        border-color: {current_theme['hero_border']} !important;
+    }}
+    .hero-title {{
+        background: {current_theme['title_grad']} !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+    }}
+    .stTabs [aria-selected="true"] {{
+        background-color: {current_theme['tab_active']} !important;
+        color: {current_theme['accent_primary']} !important;
+        border: 1px solid {current_theme['tab_border']} !important;
+    }}
+    .metric-card-accent {{
+        border-top-color: {current_theme['accent_primary']} !important;
+    }}
+</style>
+""", unsafe_allow_html=True)
+
 st.sidebar.markdown("---")
 st.sidebar.markdown("### 🎛️ Unified Framework Filter")
+
 
 # Global Framework Filter
 framework_choice = st.sidebar.selectbox(
