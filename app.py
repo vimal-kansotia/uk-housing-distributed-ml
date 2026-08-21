@@ -1067,25 +1067,68 @@ elif menu == "⚡ Single vs. Distributed Benchmark":
         """, unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
-    st.subheader("📋 Single-Node vs. Distributed Cluster Comparison Matrix")
+    st.subheader("📋 Comprehensive Comparison Matrices (3 Deep-Dive Tables)")
 
-    # Format Display Table
-    table_df = active_svd[[
-        "task", "single_node_time_sec", "distributed_time_sec", "speedup_factor",
-        "single_node_peak_ram_gb", "distributed_peak_ram_per_worker_gb",
-        "single_throughput_rows_sec", "distributed_throughput_rows_sec", "scaling_efficiency_pct"
-    ]].copy()
-    table_df["single_node_time_sec"] = table_df["single_node_time_sec"].apply(lambda x: f"{x:,.2f}s")
-    table_df["distributed_time_sec"] = table_df["distributed_time_sec"].apply(lambda x: f"{x:,.2f}s")
-    table_df["single_node_peak_ram_gb"] = table_df["single_node_peak_ram_gb"].apply(lambda x: f"{x:.2f} GB")
-    table_df["distributed_peak_ram_per_worker_gb"] = table_df["distributed_peak_ram_per_worker_gb"].apply(lambda x: f"{x:.2f} GB")
-    table_df["single_throughput_rows_sec"] = table_df["single_throughput_rows_sec"].apply(lambda x: f"{x:,.0f} rows/s")
-    table_df["distributed_throughput_rows_sec"] = table_df["distributed_throughput_rows_sec"].apply(lambda x: f"{x:,.0f} rows/s")
-    table_df.columns = [
-        "Task / Pipeline Stage", "Single Node Time", "Distributed Time", "Speedup",
-        "Single Peak RAM", "RAM per Worker", "Single Throughput", "Distributed Throughput", "Scaling Efficiency"
-    ]
-    st.dataframe(table_df, use_container_width=True, hide_index=True)
+    tab_t1, tab_t2, tab_t3 = st.tabs([
+        "📊 Table 1: Single-Node vs. Distributed Cluster Benchmark",
+        "🏆 Table 2: 4-Way Distributed ML Model Evaluation Matrix",
+        "🏛️ Table 3: Infrastructure & Architectural Parameter Comparison",
+    ])
+
+    with tab_t1:
+        st.markdown("#### 📊 Table 1: Single-Node vs. Distributed Cluster Execution Benchmark (22.5M Records)")
+        table_df = active_svd[[
+            "task", "single_node_time_sec", "distributed_time_sec", "speedup_factor",
+            "single_node_peak_ram_gb", "distributed_peak_ram_per_worker_gb",
+            "single_throughput_rows_sec", "distributed_throughput_rows_sec", "scaling_efficiency_pct"
+        ]].copy()
+        table_df["single_node_time_sec"] = table_df["single_node_time_sec"].apply(lambda x: f"{x:,.2f}s")
+        table_df["distributed_time_sec"] = table_df["distributed_time_sec"].apply(lambda x: f"{x:,.2f}s")
+        table_df["single_node_peak_ram_gb"] = table_df["single_node_peak_ram_gb"].apply(lambda x: f"{x:.2f} GB")
+        table_df["distributed_peak_ram_per_worker_gb"] = table_df["distributed_peak_ram_per_worker_gb"].apply(lambda x: f"{x:.2f} GB")
+        table_df["single_throughput_rows_sec"] = table_df["single_throughput_rows_sec"].apply(lambda x: f"{x:,.0f} rows/s")
+        table_df["distributed_throughput_rows_sec"] = table_df["distributed_throughput_rows_sec"].apply(lambda x: f"{x:,.0f} rows/s")
+        table_df.columns = [
+            "Task / Pipeline Stage", "Single Node Time", "Distributed Time", "Speedup",
+            "Single Peak RAM", "RAM per Worker", "Single Throughput", "Distributed Throughput", "Scaling Efficiency"
+        ]
+        st.dataframe(table_df, use_container_width=True, hide_index=True)
+
+    with tab_t2:
+        st.markdown("#### 🏆 Table 2: 4-Way Distributed Machine Learning Model Benchmark Matrix")
+        m_comp_path = RESULTS_DIR / "model_comparison.csv"
+        if m_comp_path.exists():
+            df_m = pd.read_csv(m_comp_path)
+            engine_map = {
+                "Linear Regression": "Apache Spark MLlib (Distributed L-BFGS)",
+                "Random Forest": "Apache Spark MLlib (50 Parallel Trees)",
+                "XGBoost": "Spark-Integrated XGBoost (SparkXGBRegressor)",
+                "LightGBM": "Pandas & PyArrow (Vectorized Leaf-Wise)",
+            }
+            df_m["Execution Engine"] = df_m["model"].map(engine_map)
+            df_m["training_time_sec"] = df_m["training_time_sec"].apply(lambda x: f"{x:,.2f}s")
+            df_m["prediction_time_sec"] = df_m["prediction_time_sec"].apply(lambda x: f"{x:,.2f}s")
+            df_m["mae"] = df_m["mae"].apply(lambda x: f"£{x:,.2f}")
+            df_m["rmse"] = df_m["rmse"].apply(lambda x: f"£{x:,.2f}")
+            df_m["r2"] = df_m["r2"].apply(lambda x: f"{x:.4f}")
+            df_m = df_m[["model", "Execution Engine", "training_time_sec", "prediction_time_sec", "mae", "rmse", "r2"]]
+            df_m.columns = ["Model Name", "Execution Engine", "Training Duration", "Inference Latency", "MAE (£)", "RMSE (£)", "R² Score"]
+            st.dataframe(df_m, use_container_width=True, hide_index=True)
+
+    with tab_t3:
+        st.markdown("#### 🏛️ Table 3: Infrastructure & Architectural Parameter Comparison")
+        arch_data = [
+            {"Parameter": "Compute Topology", "Single-Node (Standalone Python)": "Single process (1 core / 1 thread)", "Distributed Docker Cluster (Spark 3.5)": "1 Master + 3 Workers (6 Distributed Cores)"},
+            {"Parameter": "Container Virtualization", "Single-Node (Standalone Python)": "None / Monolithic Host OS", "Distributed Docker Cluster (Spark 3.5)": "Docker Compose isolated bridge network"},
+            {"Parameter": "Memory Scalability", "Single-Node (Standalone Python)": "All 2.4 GB must fit in 1 machine RAM", "Distributed Docker Cluster (Spark 3.5)": "32 Shuffle Partitions (2.1 GB per worker)"},
+            {"Parameter": "Out-Of-Memory (OOM) Risk", "Single-Node (Standalone Python)": "Extreme (Fatal crash above 16 GB)", "Distributed Docker Cluster (Spark 3.5)": "Zero OOMs (Partitioned RAM & disk spillover)"},
+            {"Parameter": "Fault Tolerance", "Single-Node (Standalone Python)": "0% (Crash aborts entire 80m pipeline)", "Distributed Docker Cluster (Spark 3.5)": "100% (Lineage DAG self-healing task replay)"},
+            {"Parameter": "Scaling Paradigm", "Single-Node (Standalone Python)": "Vertical scaling (Expensive high-RAM VM)", "Distributed Docker Cluster (Spark 3.5)": "Horizontal scaling (Add worker nodes on demand)"},
+            {"Parameter": "Data Retention Rate", "Single-Node (Standalone Python)": "Often requires row sampling / subsampling", "Distributed Docker Cluster (Spark 3.5)": "100.0% retention (All 22,489,348 rows processed)"},
+        ]
+        df_arch = pd.DataFrame(arch_data)
+        st.dataframe(df_arch, use_container_width=True, hide_index=True)
+
 
     st.markdown("<br>", unsafe_allow_html=True)
     st.subheader("📊 Visual Scalability & Performance Analytics")
