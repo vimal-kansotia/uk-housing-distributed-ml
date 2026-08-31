@@ -751,38 +751,19 @@ if menu in ["📄 Executive Overview & Report", "📑 Executive Overview & Repor
     # Interactive Filter Toolbar
     st.markdown("""
     <div class="filter-box">
-        <div class="filter-title">🔍 Interactive Model & Framework Filter Toolbar</div>
+        <div class="filter-title">🔍 Interactive Model Filter Toolbar</div>
     </div>
     """, unsafe_allow_html=True)
     
-    fc1, fc2 = st.columns([1.5, 1.5])
-    with fc1:
-        selected_models = st.multiselect(
-            "Select Models to Display",
-            options=["Linear Regression", "Random Forest", "XGBoost", "LightGBM"],
-            default=["Linear Regression", "Random Forest", "XGBoost", "LightGBM"],
-            key="exec_selected_models_dedicated",
-        )
-    with fc2:
-        sort_by_metric_exec = st.selectbox(
-            "Sort Benchmark By",
-            ["RMSE (Lowest First)", "MAE (Lowest First)", "R² Score (Highest First)", "Training Speed (Fastest First)", "Prediction Latency (Fastest First)"],
-            index=0,
-            key="exec_sort_metric_dedicated",
-        )
+    selected_models = st.multiselect(
+        "Select Models to Display",
+        options=["Linear Regression", "Random Forest", "XGBoost", "LightGBM"],
+        default=["Linear Regression", "Random Forest", "XGBoost", "LightGBM"],
+        key="exec_selected_models_dedicated",
+    )
 
     # Apply Executive Overview selection
     active_df = df_comp_raw[df_comp_raw["model"].isin(selected_models)].copy()
-    if "RMSE" in sort_by_metric_exec:
-        active_df = active_df.sort_values(by="rmse", ascending=True)
-    elif "MAE" in sort_by_metric_exec:
-        active_df = active_df.sort_values(by="mae", ascending=True)
-    elif "R²" in sort_by_metric_exec:
-        active_df = active_df.sort_values(by="r2", ascending=False)
-    elif "Training Speed" in sort_by_metric_exec:
-        active_df = active_df.sort_values(by="training_time_sec", ascending=True)
-    elif "Prediction Latency" in sort_by_metric_exec:
-        active_df = active_df.sort_values(by="prediction_time_sec", ascending=True)
 
     # Key Performance Indicators (KPI Cards)
     st.markdown("### 🎯 Dynamic Performance Scorecards")
