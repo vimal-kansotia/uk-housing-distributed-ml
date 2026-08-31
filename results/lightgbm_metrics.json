@@ -1,15 +1,15 @@
 {
   "model": "LightGBM",
-  "training_time_sec": 74.9,
-  "prediction_time_sec": 0.2,
-  "mae": 66819.9541,
-  "rmse": 352992.7218,
-  "r2": 0.2377,
-  "integration": "LightGBM Native (Spark-Integrated)",
+  "training_time_sec": 2.5634,
+  "prediction_time_sec": 0.0238,
+  "mae": 44012.9025,
+  "rmse": 99928.3669,
+  "r2": 0.8325,
+  "integration": "LightGBM Native (OpenMP / Parallel)",
   "hyperparameters": {
-    "num_leaves": 31,
-    "learning_rate": 0.1,
-    "n_estimators": 100,
+    "num_leaves": 63,
+    "learning_rate": 0.05,
+    "n_estimators": 300,
     "seed": 42
   }
 }

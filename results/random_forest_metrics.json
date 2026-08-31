@@ -1,14 +1,13 @@
 {
   "model": "Random Forest",
-  "training_time_sec": 1137.35,
-  "prediction_time_sec": 1.85,
-  "mae": 72582.558,
-  "rmse": 358749.7764,
-  "r2": 0.2027,
+  "training_time_sec": 0.5512,
+  "prediction_time_sec": 0.0145,
+  "mae": 45585.3346,
+  "rmse": 100756.3492,
+  "r2": 0.8297,
   "hyperparameters": {
-    "num_trees": 50,
-    "max_depth": 10,
-    "min_instances_per_node": 1,
+    "num_trees": 60,
+    "max_depth": 14,
     "seed": 42
   }
 }

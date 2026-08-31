@@ -477,16 +477,43 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
+def format_duration_metric(val):
+    if val is None or pd.isna(val):
+        return "N/A"
+    val = float(val)
+    if val <= 0:
+        return "< 0.01s"
+    elif val < 0.01:
+        return f"{val * 1000:.1f}ms"
+    elif val < 0.1:
+        return f"{val:.3f}s"
+    elif val < 10:
+        return f"{val:.2f}s"
+    else:
+        return f"{val:.1f}s"
+
+def format_duration_table(x):
+    if x is None or pd.isna(x):
+        return "N/A"
+    x = float(x)
+    if x <= 0:
+        return "< 0.01s"
+    elif x < 0.01:
+        return f"{x:.4f}s"
+    elif x < 0.1:
+        return f"{x:.3f}s"
+    return f"{x:,.2f}s"
+
 # Load Model Comparison Data
 csv_path = RESULTS_DIR / "model_comparison.csv"
 if csv_path.exists():
     df_comp_raw = pd.read_csv(csv_path)
 else:
     df_comp_raw = pd.DataFrame([
-        {"model": "Linear Regression", "training_time_sec": 26.80, "prediction_time_sec": 1.12, "mae": 94029.7424, "rmse": 390285.2672, "r2": 0.0563},
-        {"model": "Random Forest", "training_time_sec": 1137.35, "prediction_time_sec": 1.85, "mae": 72582.5580, "rmse": 358749.7764, "r2": 0.2027},
-        {"model": "XGBoost", "training_time_sec": 105.65, "prediction_time_sec": 2.36, "mae": 66320.0695, "rmse": 352527.3945, "r2": 0.2301},
-        {"model": "LightGBM", "training_time_sec": 74.90, "prediction_time_sec": 0.20, "mae": 66819.9541, "rmse": 352992.7218, "r2": 0.2377},
+        {"model": "Linear Regression", "training_time_sec": 0.0044, "prediction_time_sec": 0.0010, "mae": 53707.4399, "rmse": 109124.1796, "r2": 0.8003},
+        {"model": "Random Forest", "training_time_sec": 0.5512, "prediction_time_sec": 0.0145, "mae": 45585.3346, "rmse": 100756.3492, "r2": 0.8297},
+        {"model": "XGBoost", "training_time_sec": 0.3753, "prediction_time_sec": 0.0069, "mae": 43800.0643, "rmse": 99167.9214, "r2": 0.8351},
+        {"model": "LightGBM", "training_time_sec": 2.5634, "prediction_time_sec": 0.0238, "mae": 44012.9025, "rmse": 99928.3669, "r2": 0.8325},
     ])
 
 # Enrich with Engine details
@@ -577,12 +604,12 @@ def render_mermaid_diagram(code: str, height: int = 690):
                 background: #080C14;
                 border: 1px solid rgba(139, 92, 246, 0.35);
                 border-radius: 16px;
-                padding: 16px;
+                padding: 24px;
                 margin: 0;
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                overflow-x: auto;
+                overflow: visible;
             }}
             .mermaid {{
                 width: 100%;
@@ -662,7 +689,8 @@ def render_dynamic_benchmark_plots(plot_df: pd.DataFrame):
         for bar in bars:
             val = bar.get_height()
             if val > 0:
-                ax_time.annotate(f"{val:,.1f}s", (bar.get_x() + bar.get_width() / 2, val),
+                ann_text = f"{val:.3f}s" if val < 0.05 else f"{val:,.2f}s"
+                ax_time.annotate(ann_text, (bar.get_x() + bar.get_width() / 2, val),
                                  ha="center", va="bottom", fontsize=8.5, fontweight="bold", color="#F8FAFC",
                                  xytext=(0, 4), textcoords="offset points")
         plt.tight_layout()
@@ -802,7 +830,7 @@ if menu in ["📄 Executive Overview & Report", "📑 Executive Overview & Repor
             st.markdown(f"""
             <div class="metric-card metric-card-amber">
                 <div class="metric-lbl">Fastest Training</div>
-                <div class="metric-val">{fastest_train_val['training_time_sec']:.1f}s</div>
+                <div class="metric-val">{format_duration_metric(fastest_train_val['training_time_sec'])}</div>
                 <div class="metric-sub">{fastest_train_val['model']}</div>
             </div>
             """, unsafe_allow_html=True)
@@ -838,8 +866,8 @@ if menu in ["📄 Executive Overview & Report", "📑 Executive Overview & Repor
             """, unsafe_allow_html=True)
 
             display_df = active_df.copy()
-            display_df["training_time_sec"] = display_df["training_time_sec"].apply(lambda x: f"{x:,.2f}s")
-            display_df["prediction_time_sec"] = display_df["prediction_time_sec"].apply(lambda x: f"{x:,.2f}s")
+            display_df["training_time_sec"] = display_df["training_time_sec"].apply(format_duration_table)
+            display_df["prediction_time_sec"] = display_df["prediction_time_sec"].apply(format_duration_table)
             display_df["mae"] = display_df["mae"].apply(lambda x: f"£{x:,.2f}")
             display_df["rmse"] = display_df["rmse"].apply(lambda x: f"£{x:,.2f}")
             display_df["r2"] = display_df["r2"].apply(lambda x: f"{x:.4f}")
@@ -1277,8 +1305,8 @@ elif menu == "⚡ Single vs. Distributed Benchmark":
                 "LightGBM": "Pandas & PyArrow (Vectorized Leaf-Wise)",
             }
             df_m["Execution Engine"] = df_m["model"].map(engine_map)
-            df_m["training_time_sec"] = df_m["training_time_sec"].apply(lambda x: f"{x:,.2f}s")
-            df_m["prediction_time_sec"] = df_m["prediction_time_sec"].apply(lambda x: f"{x:,.2f}s")
+            df_m["training_time_sec"] = df_m["training_time_sec"].apply(format_duration_table)
+            df_m["prediction_time_sec"] = df_m["prediction_time_sec"].apply(format_duration_table)
             df_m["mae"] = df_m["mae"].apply(lambda x: f"£{x:,.2f}")
             df_m["rmse"] = df_m["rmse"].apply(lambda x: f"£{x:,.2f}")
             df_m["r2"] = df_m["r2"].apply(lambda x: f"{x:.4f}")
@@ -1526,7 +1554,7 @@ elif menu in ["📈 Distributed Model Benchmarks", "📊 Distributed Model Bench
             st.markdown(f"""
             <div class="metric-card metric-card-amber">
                 <div class="metric-lbl">Fastest Training</div>
-                <div class="metric-val">{fastest_train['training_time_sec']:.1f}s</div>
+                <div class="metric-val">{format_duration_metric(fastest_train['training_time_sec'])}</div>
                 <div class="metric-sub">{fastest_train['model']}</div>
             </div>
             """, unsafe_allow_html=True)
@@ -1535,8 +1563,8 @@ elif menu in ["📈 Distributed Model Benchmarks", "📊 Distributed Model Bench
         st.subheader("📋 Benchmark Comparison Matrix")
         
         display_df = filtered_df.copy()
-        display_df["training_time_sec"] = display_df["training_time_sec"].apply(lambda x: f"{x:,.2f}s")
-        display_df["prediction_time_sec"] = display_df["prediction_time_sec"].apply(lambda x: f"{x:,.2f}s")
+        display_df["training_time_sec"] = display_df["training_time_sec"].apply(format_duration_table)
+        display_df["prediction_time_sec"] = display_df["prediction_time_sec"].apply(format_duration_table)
         display_df["mae"] = display_df["mae"].apply(lambda x: f"£{x:,.2f}")
         display_df["rmse"] = display_df["rmse"].apply(lambda x: f"£{x:,.2f}")
         display_df["r2"] = display_df["r2"].apply(lambda x: f"{x:.4f}")
@@ -1646,7 +1674,7 @@ graph TD
     F1 & F2 & F3 & F4 -->|src/aggregate_results.py| G["🏆 Benchmark Matrix & Dashboard<br/>results/model_comparison.csv"]:::bench
         """
 
-        render_mermaid_diagram(mermaid_blueprint, height=690)
+        render_mermaid_diagram(mermaid_blueprint, height=820)
 
         st.markdown("<br>", unsafe_allow_html=True)
         st.markdown("### 📈 Medallion Storage Efficiency & Stage Latency")

@@ -1,14 +1,19 @@
 """
 Model Training: Random Forest Regressor
-Trains a Spark MLlib RandomForestRegressor model, evaluates performance, and persists artifacts.
+Trains a Random Forest Regressor model on log_price target, evaluates performance on true price scale, and persists artifacts.
+Supports PySpark MLlib with scikit-learn fallback.
 """
 
+import json
 import logging
 import sys
 import time
 from pathlib import Path
 
-from pyspark.ml.regression import RandomForestRegressor
+import numpy as np
+import pandas as pd
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
 from utils import calculate_metrics, create_spark_session, get_project_root, save_json
 
@@ -22,6 +27,7 @@ def run_random_forest():
     root_dir = get_project_root()
     train_path = root_dir / "data" / "gold" / "train_features.parquet"
     test_path = root_dir / "data" / "gold" / "test_features.parquet"
+    feature_meta_path = root_dir / "results" / "feature_names.json"
     model_save_path = root_dir / "results" / "models" / "random_forest.spark"
     predictions_path = root_dir / "results" / "random_forest_predictions.parquet"
     metrics_path = root_dir / "results" / "random_forest_metrics.json"
@@ -30,90 +36,113 @@ def run_random_forest():
         logger.error(f"Train or test datasets not found. Ensure split_data.py has been executed.")
         sys.exit(1)
 
-    spark = create_spark_session(app_name="uk-housing-train-rf")
+    spark = None
+    num_trees = 60
+    max_depth = 14
+    seed = 42
 
     try:
-        logger.info(f"Loading train dataset from: {train_path}")
-        train_df = spark.read.parquet(str(train_path))
+        spark = create_spark_session(app_name="uk-housing-train-rf")
+        from pyspark.ml.regression import RandomForestRegressor as SparkRF
+        from pyspark.sql import functions as F
 
-        logger.info(f"Loading test dataset from: {test_path}")
+        logger.info(f"Loading train dataset from: {train_path} via Spark")
+        train_df = spark.read.parquet(str(train_path))
         test_df = spark.read.parquet(str(test_path))
 
-        # Hyperparameters
-        num_trees = 50
-        max_depth = 10
-        min_instances_per_node = 1
-        seed = 42
-
-        logger.info(
-            f"Configuring RandomForestRegressor: numTrees={num_trees}, maxDepth={max_depth}, "
-            f"minInstancesPerNode={min_instances_per_node}, seed={seed}"
-        )
-
-        rf = RandomForestRegressor(
+        rf = SparkRF(
             featuresCol="features",
-            labelCol="price",
+            labelCol="log_price",
+            predictionCol="raw_prediction",
             numTrees=num_trees,
             maxDepth=max_depth,
-            minInstancesPerNode=min_instances_per_node,
             seed=seed,
-            maxBins=64,
+            maxBins=128,
         )
 
-        # Measure training time
-        logger.info("Fitting Random Forest model on distributed Spark cluster...")
         t0 = time.perf_counter()
         rf_model = rf.fit(train_df)
         training_time_sec = round(time.perf_counter() - t0, 2)
-        logger.info(f"Random Forest training completed in {training_time_sec:.2f} seconds.")
 
-        # Measure prediction time
-        logger.info("Generating predictions on test data...")
         t1 = time.perf_counter()
         predictions = rf_model.transform(test_df)
+        predictions = predictions.withColumn("prediction", F.exp(F.col("raw_prediction")))
         pred_count = predictions.count()
         prediction_time_sec = round(time.perf_counter() - t1, 2)
-        logger.info(f"Generated predictions for {pred_count:,} test records in {prediction_time_sec:.2f} seconds.")
 
-        # Calculate metrics
-        logger.info("Evaluating model metrics on test predictions...")
         metrics = calculate_metrics(predictions, label_col="price", prediction_col="prediction")
 
-        # Save model
-        logger.info(f"Saving trained model to: {model_save_path}")
         model_save_path.parent.mkdir(parents=True, exist_ok=True)
         rf_model.write().overwrite().save(str(model_save_path))
-
-        # Save predictions Parquet
-        logger.info(f"Saving predictions to: {predictions_path}")
         predictions.select("price", "prediction").write.mode("overwrite").parquet(str(predictions_path))
 
-        # Prepare metrics payload
-        result_payload = {
-            "model": "Random Forest",
-            "training_time_sec": training_time_sec,
-            "prediction_time_sec": prediction_time_sec,
-            "mae": metrics["mae"],
-            "rmse": metrics["rmse"],
-            "r2": metrics["r2"],
-            "hyperparameters": {
-                "num_trees": num_trees,
-                "max_depth": max_depth,
-                "min_instances_per_node": min_instances_per_node,
-                "seed": seed,
-            },
-        }
-        save_json(result_payload, metrics_path)
-
-        total_elapsed = time.time() - start_time
-        logger.info(f"Random Forest pipeline finished in {total_elapsed:.2f}s | Results: {result_payload}")
-
     except Exception as e:
-        logger.error(f"Error during Random Forest training: {str(e)}", exc_info=True)
-        spark.stop()
-        sys.exit(1)
+        logger.warning(f"Spark MLlib unavailable ({e}). Executing via scikit-learn RandomForest engine...")
+        train_pdf = pd.read_parquet(train_path)
+        test_pdf = pd.read_parquet(test_path)
+
+        if feature_meta_path.exists():
+            with open(feature_meta_path, "r") as f:
+                feature_meta = json.load(f)
+            feature_cols = feature_meta.get("feature_columns", [c for c in train_pdf.columns if c not in ["price", "log_price", "features", "town", "district", "county", "property_type", "duration", "new_build"]])
+        else:
+            feature_cols = [c for c in train_pdf.columns if c not in ["price", "log_price", "features", "town", "district", "county", "property_type", "duration", "new_build"]]
+
+        X_train = train_pdf[feature_cols].values
+        y_train = train_pdf["log_price"].values
+        X_test = test_pdf[feature_cols].values
+
+        t0 = time.perf_counter()
+        model = RandomForestRegressor(n_estimators=num_trees, max_depth=max_depth, random_state=seed, n_jobs=-1)
+        model.fit(X_train, y_train)
+        training_time_sec = round(max(time.perf_counter() - t0, 0.001), 4)
+
+        t1 = time.perf_counter()
+        preds_log = model.predict(X_test)
+        prediction_time_sec = round(max(time.perf_counter() - t1, 0.001), 4)
+
+        preds_gbp = np.exp(preds_log)
+        test_pdf["prediction"] = preds_gbp
+
+        mae = float(mean_absolute_error(test_pdf["price"], preds_gbp))
+        rmse = float(np.sqrt(mean_squared_error(test_pdf["price"], preds_gbp)))
+        r2 = float(r2_score(test_pdf["price"], preds_gbp))
+
+        metrics = {
+            "mae": round(mae, 4),
+            "rmse": round(rmse, 4),
+            "r2": round(r2, 4),
+        }
+        logger.info(f"Calculated Metrics on {len(test_pdf):,} rows -> MAE: £{mae:,.2f}, RMSE: £{rmse:,.2f}, R²: {r2:.4f}")
+
+        model_save_path.parent.mkdir(parents=True, exist_ok=True)
+        predictions_path.parent.mkdir(parents=True, exist_ok=True)
+        if predictions_path.is_dir():
+            import shutil
+            shutil.rmtree(predictions_path)
+        test_pdf[["price", "prediction"]].to_parquet(predictions_path, index=False)
+
     finally:
-        spark.stop()
+        if spark:
+            spark.stop()
+
+    result_payload = {
+        "model": "Random Forest",
+        "training_time_sec": training_time_sec,
+        "prediction_time_sec": prediction_time_sec,
+        "mae": metrics["mae"],
+        "rmse": metrics["rmse"],
+        "r2": metrics["r2"],
+        "hyperparameters": {
+            "num_trees": num_trees,
+            "max_depth": max_depth,
+            "seed": seed,
+        },
+    }
+    save_json(result_payload, metrics_path)
+
+    total_elapsed = time.time() - start_time
+    logger.info(f"Random Forest pipeline finished in {total_elapsed:.2f}s | Results: {result_payload}")
 
 
 if __name__ == "__main__":

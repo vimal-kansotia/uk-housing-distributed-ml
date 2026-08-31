@@ -83,7 +83,8 @@ def generate_plots():
     plt.ylim(0, df["training_time_sec"].max() * 1.15)
     for bar in bars.patches:
         val = bar.get_height()
-        bars.annotate(f"{val:,.2f}s",
+        ann_text = f"{val:.3f}s" if val < 0.05 else f"{val:,.2f}s"
+        bars.annotate(ann_text,
                       (bar.get_x() + bar.get_width() / 2, val),
                       ha="center", va="bottom", fontsize=11, fontweight="bold", xytext=(0, 4), textcoords="offset points")
     plt.tight_layout()
@@ -99,7 +100,8 @@ def generate_plots():
     plt.ylim(0, df["prediction_time_sec"].max() * 1.25)
     for bar in bars.patches:
         val = bar.get_height()
-        bars.annotate(f"{val:.2f}s",
+        ann_text = f"{val:.3f}s" if val < 0.05 else f"{val:.2f}s"
+        bars.annotate(ann_text,
                       (bar.get_x() + bar.get_width() / 2, val),
                       ha="center", va="bottom", fontsize=11, fontweight="bold", xytext=(0, 4), textcoords="offset points")
     plt.tight_layout()

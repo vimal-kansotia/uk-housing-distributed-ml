@@ -1,8 +1,8 @@
 {
   "model": "Linear Regression",
-  "training_time_sec": 26.8,
-  "prediction_time_sec": 1.12,
-  "mae": 94029.7424,
-  "rmse": 390285.2672,
-  "r2": 0.0563
+  "training_time_sec": 0.0044,
+  "prediction_time_sec": 0.001,
+  "mae": 53707.4399,
+  "rmse": 109124.1796,
+  "r2": 0.8003
 }

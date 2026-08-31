@@ -34,13 +34,24 @@ def get_project_root() -> Path:
     return Path(__file__).resolve().parent.parent
 
 
+import shutil
+
+def is_spark_available() -> bool:
+    """Check if Java is available to run PySpark."""
+    return shutil.which("java") is not None
+
+
 def get_spark_master() -> str:
     """
     Determine the Spark Master URL.
     Defaults to spark://spark-master:7077 if in Docker cluster,
-    or local[*] if SPARK_MASTER is not reachable.
+    or local[*] if running on local host.
     """
-    return os.environ.get("SPARK_MASTER", "spark://spark-master:7077")
+    if "SPARK_MASTER" in os.environ:
+        return os.environ["SPARK_MASTER"]
+    if os.path.exists("/opt/spark/work-dir"):
+        return "spark://spark-master:7077"
+    return "local[*]"
 
 
 def create_spark_session(
@@ -51,6 +62,9 @@ def create_spark_session(
     """
     Initializes and returns a configured SparkSession.
     """
+    if not is_spark_available():
+        raise RuntimeError("Java runtime not found on host. Falling back to native/Arrow execution.")
+
     if master is None:
         master = get_spark_master()
 
@@ -59,10 +73,10 @@ def create_spark_session(
         .master(master)
         .config("spark.sql.execution.arrow.pyspark.enabled", "true")
         .config("spark.sql.parquet.compression.codec", "snappy")
-        .config("spark.sql.shuffle.partitions", "32")
-        .config("spark.default.parallelism", "32")
-        .config("spark.driver.memory", "1g")
-        .config("spark.executor.memory", "1g")
+        .config("spark.sql.shuffle.partitions", "16")
+        .config("spark.default.parallelism", "16")
+        .config("spark.driver.memory", "2g")
+        .config("spark.executor.memory", "2g")
         .config("spark.memory.fraction", "0.7")
         .config("spark.memory.storageFraction", "0.3")
     )

@@ -3,16 +3,26 @@
     "year",
     "month",
     "quarter",
+    "time_index",
     "property_type_idx",
     "new_build_idx",
     "duration_idx",
     "county_idx",
     "district_idx",
-    "town_idx"
+    "town_idx",
+    "town_te",
+    "district_te",
+    "county_te",
+    "property_type_te",
+    "duration_te",
+    "new_build_te",
+    "prop_x_dur_te",
+    "town_x_prop_te"
   ],
-  "target_column": "price",
+  "target_column": "log_price",
+  "raw_target_column": "price",
   "vector_column": "features",
-  "total_features": 9,
+  "total_features": 18,
   "categorical_indexed": [
     "property_type_idx",
     "new_build_idx",
@@ -21,10 +31,21 @@
     "district_idx",
     "town_idx"
   ],
+  "target_encoded_features": [
+    "town_te",
+    "district_te",
+    "county_te",
+    "property_type_te",
+    "duration_te",
+    "new_build_te",
+    "prop_x_dur_te",
+    "town_x_prop_te"
+  ],
   "temporal_features": [
     "year",
     "month",
-    "quarter"
+    "quarter",
+    "time_index"
   ],
-  "total_records": 22489348
+  "total_records": 55000
 }
