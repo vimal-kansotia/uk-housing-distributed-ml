@@ -942,21 +942,15 @@ elif menu == "🔮 Real-Time Price Valuation":
 
     col1, col2 = st.columns([1.1, 0.9])
 
-    UK_CITY_REGIONS = {
-        "LIVERPOOL": {
-            "county": "MERSEYSIDE",
+    UK_COUNTY_DATA = {
+        "MERSEYSIDE": {
+            "towns": ["LIVERPOOL", "BIRKENHEAD", "ST HELENS", "SOUTHPORT", "BOOTLE"],
             "districts": ["LIVERPOOL CENTRAL", "SEFTON", "WIRRAL", "ST HELENS", "KNOWSLEY"],
             "geo_factor": 0.80,
             "district_factors": {"LIVERPOOL CENTRAL": 1.0, "SEFTON": 1.05, "WIRRAL": 1.08, "ST HELENS": 0.90, "KNOWSLEY": 0.88},
         },
-        "MANCHESTER": {
-            "county": "GREATER MANCHESTER",
-            "districts": ["MANCHESTER CITY CENTRE", "SALFORD", "TRAFFORD", "STOCKPORT", "BOLTON", "OLDHAM", "ROCHDALE", "WIGAN"],
-            "geo_factor": 0.95,
-            "district_factors": {"MANCHESTER CITY CENTRE": 1.05, "TRAFFORD": 1.20, "SALFORD": 0.98, "STOCKPORT": 1.10, "BOLTON": 0.88, "OLDHAM": 0.84, "ROCHDALE": 0.82, "WIGAN": 0.85},
-        },
-        "LONDON": {
-            "county": "GREATER LONDON",
+        "GREATER LONDON": {
+            "towns": ["LONDON", "CITY OF WESTMINSTER", "CROYDON", "RICHMOND", "GREENWICH", "BROMLEY", "EALING"],
             "districts": [
                 "CITY OF WESTMINSTER", "KENSINGTON AND CHELSEA", "CAMDEN", "ISLINGTON",
                 "HAMMERSMITH AND FULHAM", "RICHMOND UPON THAMES", "WANDSWORTH",
@@ -971,80 +965,86 @@ elif menu == "🔮 Real-Time Price Valuation":
                 "BARNET": 1.10, "EALING": 1.05, "CROYDON": 0.85, "BROMLEY": 0.95, "NEWHAM": 0.88, "OTHER BOROUGHS": 0.95
             },
         },
-        "BIRMINGHAM": {
-            "county": "WEST MIDLANDS",
+        "GREATER MANCHESTER": {
+            "towns": ["MANCHESTER", "SALFORD", "TRAFFORD", "STOCKPORT", "BOLTON", "OLDHAM", "ROCHDALE", "WIGAN"],
+            "districts": ["MANCHESTER CITY CENTRE", "SALFORD", "TRAFFORD", "STOCKPORT", "BOLTON", "OLDHAM", "ROCHDALE", "WIGAN"],
+            "geo_factor": 0.95,
+            "district_factors": {"MANCHESTER CITY CENTRE": 1.05, "TRAFFORD": 1.20, "SALFORD": 0.98, "STOCKPORT": 1.10, "BOLTON": 0.88, "OLDHAM": 0.84, "ROCHDALE": 0.82, "WIGAN": 0.85},
+        },
+        "WEST MIDLANDS": {
+            "towns": ["BIRMINGHAM", "COVENTRY", "WOLVERHAMPTON", "SOLIHULL", "SUTTON COLDFIELD", "DUDLEY"],
             "districts": ["BIRMINGHAM CENTRAL", "SOLIHULL", "SUTTON COLDFIELD", "COVENTRY", "WOLVERHAMPTON", "DUDLEY", "SANDWELL"],
             "geo_factor": 0.92,
             "district_factors": {"BIRMINGHAM CENTRAL": 1.0, "SOLIHULL": 1.25, "SUTTON COLDFIELD": 1.20, "COVENTRY": 0.95, "WOLVERHAMPTON": 0.85, "DUDLEY": 0.85, "SANDWELL": 0.82},
         },
-        "LEEDS": {
-            "county": "WEST YORKSHIRE",
+        "WEST YORKSHIRE": {
+            "towns": ["LEEDS", "BRADFORD", "WAKEFIELD", "HUDDERSFIELD", "HALIFAX"],
             "districts": ["LEEDS CENTRAL", "HEADINGLEY", "BRADFORD", "WAKEFIELD", "KIRKLEES", "CALDERDALE"],
             "geo_factor": 0.86,
             "district_factors": {"LEEDS CENTRAL": 1.0, "HEADINGLEY": 1.12, "BRADFORD": 0.78, "WAKEFIELD": 0.88, "KIRKLEES": 0.85, "CALDERDALE": 0.85},
         },
         "BRISTOL": {
-            "county": "BRISTOL",
+            "towns": ["BRISTOL", "BATH", "CLIFTON", "KEYNSHAM"],
             "districts": ["BRISTOL CENTRAL", "CLIFTON", "BATH AND NORTH EAST SOMERSET", "SOUTH GLOUCESTERSHIRE"],
             "geo_factor": 1.32,
             "district_factors": {"BRISTOL CENTRAL": 1.0, "CLIFTON": 1.35, "BATH AND NORTH EAST SOMERSET": 1.20, "SOUTH GLOUCESTERSHIRE": 0.95},
         },
-        "OXFORD": {
-            "county": "OXFORDSHIRE",
+        "OXFORDSHIRE": {
+            "towns": ["OXFORD", "BANBURY", "ABINGDON", "BICESTER", "WITNEY"],
             "districts": ["OXFORD CITY", "CHERWELL", "SOUTH OXFORDSHIRE", "VALE OF WHITE HORSE"],
             "geo_factor": 1.65,
             "district_factors": {"OXFORD CITY": 1.0, "SOUTH OXFORDSHIRE": 1.10, "CHERWELL": 0.90, "VALE OF WHITE HORSE": 0.95},
         },
-        "CAMBRIDGE": {
-            "county": "CAMBRIDGESHIRE",
+        "CAMBRIDGESHIRE": {
+            "towns": ["CAMBRIDGE", "PETERBOROUGH", "ELY", "HUNTINGDON"],
             "districts": ["CAMBRIDGE CITY", "SOUTH CAMBRIDGESHIRE", "HUNTINGDONSHIRE", "EAST CAMBRIDGESHIRE"],
             "geo_factor": 1.60,
             "district_factors": {"CAMBRIDGE CITY": 1.0, "SOUTH CAMBRIDGESHIRE": 1.08, "HUNTINGDONSHIRE": 0.85, "EAST CAMBRIDGESHIRE": 0.88},
         },
-        "NEWCASTLE UPON TYNE": {
-            "county": "TYNE AND WEAR",
+        "TYNE AND WEAR": {
+            "towns": ["NEWCASTLE UPON TYNE", "SUNDERLAND", "GATESHEAD", "SOUTH SHIELDS"],
             "districts": ["NEWCASTLE CITY", "JESMOND", "GATESHEAD", "NORTH TYNESIDE", "SUNDERLAND"],
             "geo_factor": 0.76,
             "district_factors": {"NEWCASTLE CITY": 1.0, "JESMOND": 1.25, "GATESHEAD": 0.85, "NORTH TYNESIDE": 0.95, "SUNDERLAND": 0.80},
         },
-        "SHEFFIELD": {
-            "county": "SOUTH YORKSHIRE",
+        "SOUTH YORKSHIRE": {
+            "towns": ["SHEFFIELD", "ROTHERHAM", "DONCASTER", "BARNSLEY"],
             "districts": ["SHEFFIELD CENTRAL", "ECCLESALL", "ROTHERHAM", "DONCASTER", "BARNSLEY"],
             "geo_factor": 0.78,
             "district_factors": {"SHEFFIELD CENTRAL": 1.0, "ECCLESALL": 1.30, "ROTHERHAM": 0.82, "DONCASTER": 0.80, "BARNSLEY": 0.80},
         },
-        "NOTTINGHAM": {
-            "county": "NOTTINGHAMSHIRE",
+        "NOTTINGHAMSHIRE": {
+            "towns": ["NOTTINGHAM", "MANSFIELD", "NEWARK-ON-TRENT", "WEST BRIDGFORD"],
             "districts": ["NOTTINGHAM CITY", "WEST BRIDGFORD", "RUSHCLIFFE", "GEDLING", "BROXTOWE"],
             "geo_factor": 0.88,
             "district_factors": {"NOTTINGHAM CITY": 1.0, "WEST BRIDGFORD": 1.28, "RUSHCLIFFE": 1.22, "GEDLING": 0.90, "BROXTOWE": 0.92},
         },
-        "LEICESTER": {
-            "county": "LEICESTERSHIRE",
+        "LEICESTERSHIRE": {
+            "towns": ["LEICESTER", "LOUGHBOROUGH", "HINCKLEY", "MELTON MOWBRAY"],
             "districts": ["LEICESTER CITY", "OADBY AND WIGSTON", "CHARNWOOD", "HARBOROUGH"],
             "geo_factor": 0.92,
             "district_factors": {"LEICESTER CITY": 1.0, "HARBOROUGH": 1.15, "OADBY AND WIGSTON": 1.08, "CHARNWOOD": 1.02},
         },
-        "SOUTHAMPTON": {
-            "county": "HAMPSHIRE",
+        "HAMPSHIRE": {
+            "towns": ["SOUTHAMPTON", "PORTSMOUTH", "WINCHESTER", "BASINGSTOKE"],
             "districts": ["SOUTHAMPTON CITY", "PORTSMOUTH", "WINCHESTER", "EASTLEIGH"],
             "geo_factor": 1.15,
             "district_factors": {"SOUTHAMPTON CITY": 1.0, "WINCHESTER": 1.45, "PORTSMOUTH": 0.92, "EASTLEIGH": 1.05},
         },
-        "READING": {
-            "county": "BERKSHIRE",
+        "BERKSHIRE": {
+            "towns": ["READING", "SLOUGH", "WINDSOR", "MAIDENHEAD", "BRACKNELL"],
             "districts": ["READING CENTRAL", "WOKINGHAM", "WINDSOR AND MAIDENHEAD", "WEST BERKSHIRE"],
             "geo_factor": 1.42,
             "district_factors": {"READING CENTRAL": 1.0, "WINDSOR AND MAIDENHEAD": 1.35, "WOKINGHAM": 1.20, "WEST BERKSHIRE": 1.10},
         },
-        "SURREY / GUILDFORD": {
-            "county": "SURREY",
+        "SURREY": {
+            "towns": ["GUILDFORD", "WOKING", "EPSOM", "REIGATE", "FARNHAM"],
             "districts": ["GUILDFORD", "WOKING", "ELMBRIDGE", "EPSOM AND EWELL", "REIGATE AND BANSTEAD"],
             "geo_factor": 1.72,
             "district_factors": {"ELMBRIDGE": 1.30, "GUILDFORD": 1.15, "WOKING": 1.05, "EPSOM AND EWELL": 1.08, "REIGATE AND BANSTEAD": 1.05},
         },
         "OTHER / UK AVERAGE": {
-            "county": "OTHER",
+            "towns": ["NATIONAL BENCHMARK TOWN"],
             "districts": ["NATIONAL BENCHMARK DISTRICT"],
             "geo_factor": 1.00,
             "district_factors": {"NATIONAL BENCHMARK DISTRICT": 1.0},
@@ -1083,24 +1083,27 @@ elif menu == "🔮 Real-Time Price Valuation":
                 st.caption("ℹ️ *Note: Freehold flats are uncommon in England & Wales; typically 'Share of Freehold'.*")
 
         with c2:
-            town_options = list(UK_CITY_REGIONS.keys())
+            county_options = list(UK_COUNTY_DATA.keys())
+            selected_county = st.selectbox(
+                "County / Region",
+                county_options,
+                index=0,
+                help="Select UK County or Administrative Region — Towns and Districts update dynamically",
+            )
+            county_info = UK_COUNTY_DATA[selected_county]
+
             selected_town = st.selectbox(
                 "Town / City",
-                town_options,
+                county_info["towns"],
                 index=0,
-                help="Select town or city — County & District automatically synchronize",
+                help=f"Major urban centres located within {selected_county}",
             )
-            region_info = UK_CITY_REGIONS[selected_town]
 
-            # Display synchronized county
-            st.text_input("Synchronized County", value=region_info["county"], disabled=True)
-
-            # Synchronized districts
             district = st.selectbox(
                 "District / Borough",
-                region_info["districts"],
+                county_info["districts"],
                 index=0,
-                help="Specific district or borough within this metropolitan area",
+                help=f"Specific municipal borough or district in {selected_county}",
             )
 
         st.subheader("📅 Valuation Date")
@@ -1143,7 +1146,7 @@ elif menu == "🔮 Real-Time Price Valuation":
         base_uk_price = uk_hpi_base.get(val_year, 288_000 * ((1.035) ** (val_year - 2024)))
 
         # Property type factors calibrated from UK Land Registry
-        if selected_town == "LONDON":
+        if selected_county == "GREATER LONDON":
             type_factors = {
                 "Flats/Maisonettes (F)": 0.85,
                 "Terraced (T)": 1.10,
@@ -1161,8 +1164,8 @@ elif menu == "🔮 Real-Time Price Valuation":
             }
         type_mult = type_factors.get(prop_type, 1.0)
 
-        geo_mult = region_info["geo_factor"]
-        district_mult = region_info["district_factors"].get(district, 1.0)
+        geo_mult = county_info["geo_factor"]
+        district_mult = county_info["district_factors"].get(district, 1.0)
 
         new_mult = 1.12 if "Newly Built" in new_build else 1.0
         if is_flat:
@@ -1289,7 +1292,7 @@ elif menu == "🔮 Real-Time Price Valuation":
                 st.markdown("#### 🔍 Value Driver Breakdown")
                 st.write(f"- **UK National Benchmark ({val_year})**: `£{base_uk_price:,.0f}`")
                 st.write(f"- **Property Type Factor ({prop_type})**: `{type_mult:.2f}x`")
-                st.write(f"- **Regional Factor ({selected_town} / {region_info['county']})**: `{geo_mult:.2f}x`")
+                st.write(f"- **Regional Factor ({selected_county} / {selected_town})**: `{geo_mult:.2f}x`")
                 st.write(f"- **District Factor ({district})**: `{district_mult:.2f}x`")
                 st.write(f"- **Construction & Tenure Factor**: `{(new_mult * dur_mult):.2f}x` ({duration}, {new_build})")
                 st.write(f"- **Seasonal Timing Adjustment**: `{seasonal_mult:.3f}x` (Month {val_month}, Q{val_quarter})")
