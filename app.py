@@ -1115,8 +1115,14 @@ elif menu == "🔮 Real-Time Price Valuation":
 
         model_choice = st.selectbox(
             "Selected Inference Model",
-            ["LightGBM Regressor (Fastest)", "XGBoost Spark Regressor", "Random Forest Regressor", "Linear Regression Baseline"],
+            [
+                "Distributed XGBoost (Champion — 83.5% R²)",
+                "LightGBM Regressor (Fastest Tree Booster)",
+                "Random Forest Regressor (50 Trees Ensemble)",
+                "Linear Regression (Baseline Model)",
+            ],
             index=0,
+            help="Select trained distributed model — Distributed XGBoost achieved highest accuracy (83.5% R²)",
         )
 
         predict_btn = st.button("🚀 Calculate Estimated Valuation", type="primary", use_container_width=True)
@@ -1165,7 +1171,7 @@ elif menu == "🔮 Real-Time Price Valuation":
             dur_mult = 1.00 if "Freehold" in duration else 0.92
 
         MODEL_PROFILES = {
-            "XGBoost Spark Regressor": {
+            "Distributed XGBoost (Champion — 83.5% R²)": {
                 "name": "Distributed XGBoost",
                 "mult": 1.000,
                 "engine": "SparkXGB / PyArrow Engine",
@@ -1176,7 +1182,7 @@ elif menu == "🔮 Real-Time Price Valuation":
                 "tag": "🥇 Champion (Highest R²)",
                 "color": "#10B981",
             },
-            "LightGBM Regressor (Fastest)": {
+            "LightGBM Regressor (Fastest Tree Booster)": {
                 "name": "LightGBM Regressor",
                 "mult": 0.995,
                 "engine": "Vectorized OpenMP Booster",
@@ -1184,10 +1190,10 @@ elif menu == "🔮 Real-Time Price Valuation":
                 "mae": "£44,013",
                 "rmse": "£99,928",
                 "r2": "0.8325",
-                "tag": "⚡ Fastest Latency",
+                "tag": "⚡ Fastest Tree Booster",
                 "color": "#8B5CF6",
             },
-            "Random Forest Regressor": {
+            "Random Forest Regressor (50 Trees Ensemble)": {
                 "name": "Random Forest",
                 "mult": 0.985,
                 "engine": "Spark MLlib Trees (50 Trees)",
@@ -1195,10 +1201,10 @@ elif menu == "🔮 Real-Time Price Valuation":
                 "mae": "£45,585",
                 "rmse": "£100,756",
                 "r2": "0.8297",
-                "tag": "🌲 Ensemble Average",
+                "tag": "🌲 50-Tree Ensemble",
                 "color": "#3B82F6",
             },
-            "Linear Regression Baseline": {
+            "Linear Regression (Baseline Model)": {
                 "name": "Linear Regression",
                 "mult": 0.965,
                 "engine": "MLlib L-BFGS Matrix Solver",
